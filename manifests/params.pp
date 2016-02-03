@@ -20,6 +20,14 @@ class gitlab_ci_multi_runner::params {
     
     'Debian': {
       
+      if $::operatingsystem == 'Debian' {
+        $package_repo_location = "https://packages.gitlab.com/runner/gitlab-ci-multi-runner/debian/"
+        $package_srepo_location = undef
+      }
+      if $::operatingsystem == 'Ubuntu' {
+        $package_repo_location
+        $package_srepo_location = undef
+      }
     }
   }
 }

@@ -11,10 +11,6 @@
 #   URL of the Gitlab Server.
 #   Default: undef.
 #
-# [*tags*]
-#   Array of tags.
-#   Default: undef.
-#
 # [*token*]
 #   CI Token.
 #   Default: undef.
@@ -87,14 +83,12 @@
 #
 #  gitlab_ci_multi_runner::runner { "This is My Runner":
 #      gitlab_ci_url => 'http://ci.gitlab.examplecorp.com'
-#      tags          => ['tag', 'tag2','java', 'php'],
 #      token         => 'sometoken'
 #      executor      => 'shell',
 #  }
 #
 #  gitlab_ci_multi_runner::runner { "This is My Second Runner":
 #      gitlab_ci_url => 'http://ci.gitlab.examplecorp.com'
-#      tags          => ['tag', 'tag2','npm', 'grunt'],
 #      token         => 'sometoken'
 #      executor      => 'ssh',
 #      ssh_host      => 'cirunners.examplecorp.com'
@@ -110,7 +104,6 @@ define gitlab_ci_multi_runner::runner (
     ########################################################
 
     $gitlab_ci_url = undef,
-    $tags = undef,
     $token = undef,
     $env = undef,
     $executor = undef,
@@ -145,131 +138,18 @@ define gitlab_ci_multi_runner::runner (
     $ssh_port = undef,
     $ssh_user = undef,
     $ssh_password = undef,
+    $order = 15,
     $require = [ Class['gitlab_ci_multi_runner'] ]
 ) {
-    # GitLab allows runner names with problematic characters like quotes
-    # Make sure they don't trip up the shell when executed
-    $description = shellquote($name)
+  # GitLab allows runner names with problematic characters like quotes
+  # Make sure they don't trip up the shell when executed
+  $description = shellquote($name)
 
-    $user = 'gitlab_ci_multi_runner'
-    $group = $user
-    $home_path = "/home/${user}"
-    $toml_file = $::gitlab_ci_multi_runner::version ? {
-        /^0\.[0-4]\..*/ => "${home_path}/config.toml",
-        default         => "${home_path}/.gitlab-runner/config.toml",
-    }
-
-    # Here begins the arduous, manual process of taking each argument
-    # and turning it into option strings.
-    # TODO find a better way to read this.
-
-    if $gitlab_ci_url {
-        $gitlab_ci_url_opt = "--url=${gitlab_ci_url}"
-    }
-
-    if $description {
-        $description_opt = $::gitlab_ci_multi_runner::version ? {
-            /^0\.[0-4]\..*/ => "--description=${description}",
-            default         => "--name=${description}",
-        }
-    }
-
-    if $tags {
-        $tagstr = join($tags,',')
-        $tags_opt = "--tag-list=${tagstr}"
-    }
-
-    if $token {
-        $token_opt = "--registration-token=${token}"
-    }
-
-    if $env {
-        $envarry = prefix(any2array($env),'--env=')
-        $env_opts = join($envarry,' ')
-    }
-
-    # I group like arguments together so my final opstring won't be so giant.
-    $runner_opts = "${gitlab_ci_url_opt} ${description_opt} ${tags_opt} ${token_opt} ${env_opts}"
-
-    if $executor {
-        $executor_opt = "--executor=${executor}"
-    }
-
-    if $docker_image {
-        $docker_image_opt = "--docker-image=${docker_image}"
-    }
-
-    if $docker_privileged {
-        $docker_privileged_opt = '--docker-privileged'
-    }
-
-    if $docker_mysql {
-        $docker_mysql_opt = "--docker-mysql=${docker_mysql}"
-    }
-
-    if $docker_postgres {
-        $docker_postgres_opt = "--docker-postgres=${docker_postgres}"
-    }
-
-    if $docker_redis {
-        $docker_redis_opt = "--docker-redis=${docker_redis}"
-    }
-
-    if $docker_mongo {
-        $docker_mongo_opt = "--docker-mongo=${docker_mongo}"
-    }
-
-    if $docker_allowed_images {
-        $docker_allowed_images_opt = inline_template(
-          "<% @docker_allowed_images.each do |image| -%>
-            --docker-allowed-images=<%= \"'#{image}'\" -%>
-            <% end -%>"
-        )
-    }
-
-    if $docker_allowed_services {
-        $docker_allowed_services_opt = inline_template(
-          "<% @docker_allowed_services.each do |service| -%>
-            --docker-allowed-services=<%= \"'#{service}'\" -%>
-            <% end -%>"
-        )
-    }
-
-    $docker_opts = "${docker_image_opt} ${docker_privileged_opt} ${docker_mysql_opt} ${docker_postgres_opt} ${docker_redis_opt} ${docker_mongo_opt} ${docker_allowed_images_opt} ${docker_allowed_services_opt}"
-
-    if $parallels_vm {
-        $parallels_vm_opt = "--parallels-vm=${parallels_vm}"
-    }
-
-    if $ssh_host {
-        $ssh_host_opt = "--ssh-host=${ssh_host}"
-    }
-
-    if $ssh_port {
-        $ssh_port_opt = "--ssh-port=${ssh_port}"
-    }
-
-    if $ssh_user {
-        $ssh_user_opt = "--ssh-user=${ssh_user}"
-    }
-
-    if $ssh_password {
-        $ssh_password_opt = "--ssh-password=${ssh_password}"
-    }
-
-    $ssh_opts = "${ssh_host_opt} ${ssh_port_opt} ${ssh_user_opt} ${ssh_password_opt}"
-
-    $opts = "${runner_opts} ${executor_opt} ${docker_opts} ${parallels_vm_opt} ${ssh_opts}"
-
-    # Register a new runner - this is where the magic happens.
-    # Only if the config.toml file doesn't already contain an entry.
-    # --non-interactive means it won't ask us for things, it'll just fail out.
-    exec { "Register-${name}":
-        command  => "gitlab-ci-multi-runner register --non-interactive ${opts}",
-        user     => $user,
-        provider => shell,
-        onlyif   => "! grep ${description} ${toml_file}",
-        cwd      => $home_path,
-        require  => $require,
-    }
+  concat::fragment{ 'motd_header':
+    target  => $config_path,
+    content => template(),
+    order   => $order,
+    content => template('gitlab_ci_multi_runner/runner.toml.erb'),
+    notify  => Service[$gitlab_ci_multi_runner::service_name]
+  }
 }

@@ -1,0 +1,14 @@
+[[runners]]
+  name = "<%= @description %>"
+  url = "<%= @gitlab_ci_url %>"
+  token = "<%= @token %>"
+  tls-ca-file = ""
+  executor = "<%= @executor %>"
+  [runners.ssh]
+  [runners.docker]
+    image = ""
+    privileged = false
+  [runners.parallels]
+    base_name = ""
+  [runners.virtualbox]
+    base_name = ""

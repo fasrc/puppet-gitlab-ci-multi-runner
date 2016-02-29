@@ -3,7 +3,6 @@ class gitlab_ci_multi_runner::config {
     owner => 'root',
     group => 'root',
     mode  => '0600',
-    require => Package[$gitlab_ci_multi_runner::pkg_name]
   }
 
   concat::fragment { "gitlab_ci_multi_runner_globals":

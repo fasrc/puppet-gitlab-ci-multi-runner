@@ -75,10 +75,6 @@
 #   The SSH Password.
 #   Default: undef.
 #
-# [*require*]
-#   Array of requirements for the runner registration resource.
-#   Default: [ Class['gitlab_ci_multi_runner'] ].
-#
 # === Examples
 #
 #  gitlab_ci_multi_runner::runner { "This is My Runner":
@@ -139,7 +135,6 @@ define gitlab_ci_multi_runner::runner (
     $ssh_user = undef,
     $ssh_password = undef,
     $order = 15,
-    $require = [ Class['gitlab_ci_multi_runner'] ]
 ) {
   # GitLab allows runner names with problematic characters like quotes
   # Make sure they don't trip up the shell when executed
@@ -150,6 +145,5 @@ define gitlab_ci_multi_runner::runner (
     content => template(),
     order   => $order,
     content => template('gitlab_ci_multi_runner/runner.toml.erb'),
-    notify  => Service[$gitlab_ci_multi_runner::service_name]
   }
 }

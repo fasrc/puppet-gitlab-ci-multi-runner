@@ -11,32 +11,15 @@ class gitlab_ci_multi_runner (
   $concurrent             = $gitlab_ci_multi_runner::params::concurrent,
 ){
 
-  class { 'gitlab_ci_multi_runner::repo': }
-
+  class { 'gitlab_ci_multi_runner::repo': } ->
+  class { 'gitlab_ci_multi_runner::install': } ->
+  class { 'gitlab_ci_multi_runner::config': } ~>
+  class { 'gitlab_ci_multi_runner::service': }
   contain 'gitlab_ci_multi_runner::repo'
+  contain 'gitlab_ci_multi_runner::install'
+  contain 'gitlab_ci_multi_runner::config'
+  contain 'gitlab_ci_multi_runner::service'
 
-  package { $pkg_name:
-    ensure => $version,
-  }
+  Class['gitlab_ci_multi_runner'] -> Gitlab_ci_multi_runner::Runner <||>
 
-  concat { $config_path:
-    owner => 'root',
-    group => 'root',
-    mode  => '0600',
-    require => Package[$pkg_name]
-  }
-
-  concat::fragment { "gitlab_ci_multi_runner_globals":
-    target  => $config_path,
-    content => template('gitlab_ci_multi_runner/globals.toml.erb'),
-    order   => '0',
-  }
-
-  service { $service_name:
-    ensure  => 'running',
-    require => [
-      Package[$pkg_name],
-      File[$config_path]
-    ]
-  }
 }

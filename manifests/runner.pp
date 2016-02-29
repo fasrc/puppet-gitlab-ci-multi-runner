@@ -99,7 +99,7 @@ define gitlab_ci_multi_runner::runner (
     # Used By all Executors.                               #
     ########################################################
 
-    $gitlab_ci_url = undef,
+    $gitlab_ci_url = $gitlab_ci_multi_runner::gitlab_ci_url,
     $token = undef,
     $env = undef,
     $executor = undef,

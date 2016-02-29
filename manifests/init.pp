@@ -9,6 +9,7 @@ class gitlab_ci_multi_runner (
   $pkg_name               = $gitlab_ci_multi_runner::params::pkg_name,
   $service_name           = $gitlab_ci_multi_runner::params::service_name,
   $concurrent             = $gitlab_ci_multi_runner::params::concurrent,
+  $gitlab_ci_url          = $gitlab_ci_multi_runner::params::gitlab_ci_url,
 ){
 
   class { 'gitlab_ci_multi_runner::repo': } ->

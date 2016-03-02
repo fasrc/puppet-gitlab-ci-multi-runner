@@ -4,11 +4,11 @@
 #
 class gitlab_ci_multi_runner::params {
 
-  $pkg_name = 'gitlab-ci-multi-runner',
-  $service_name = 'gitlab-runner',
-  $version = 'latest',
-  $gitlab_ci_url = undef,
-  $config_path = '/etc/gitlab-runner/config.toml',
+  $pkg_name = 'gitlab-ci-multi-runner'
+  $service_name = 'gitlab-runner'
+  $version = 'latest'
+  $gitlab_ci_url = undef
+  $config_path = '/etc/gitlab-runner/config.toml'
   $package_repo_gpgkey = 'https://packages.gitlab.com/gpg.key'
 
   case $::osfamily {

@@ -22,7 +22,4 @@ class gitlab_ci_multi_runner (
   contain 'gitlab_ci_multi_runner::install'
   contain 'gitlab_ci_multi_runner::config'
   contain 'gitlab_ci_multi_runner::service'
-
-  Class['gitlab_ci_multi_runner'] -> Gitlab_ci_multi_runner::Runner <||>
-
 }

@@ -141,8 +141,7 @@ define gitlab_ci_multi_runner::runner (
   $description = shellquote($name)
 
   concat::fragment{ 'motd_header':
-    target  => $config_path,
-    content => template(),
+    target  => $gitlab_ci_multi_runner::config_path,
     order   => $order,
     content => template('gitlab_ci_multi_runner/runner.toml.erb'),
   }

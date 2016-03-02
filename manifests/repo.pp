@@ -11,7 +11,7 @@ class gitlab_ci_multi_runner::repo {
           gpgkey   => $gitlab_ci_multi_runner::package_repo_gpgkey,
           gpgcheck => true,
         }
-      
+
         if ($gitlab_ci_multi_runner::include_srepo) {
           yumrepo {'gitlab-ci-multi-runner-source':
             baseurl  => $gitlab_ci_multi_runner::package_srepo_location,
@@ -21,14 +21,16 @@ class gitlab_ci_multi_runner::repo {
         }
       }
     }
-    
+
     'Debian': {
       if $gitlab_ci_multi_runner::manage_repo {
         include ::apt
         # apt-transport-https is required by apt to get the source
         ensure_packages(['apt-transport-https'])
-        
+
       }
+    }
+    default: {
     }
   }
 }

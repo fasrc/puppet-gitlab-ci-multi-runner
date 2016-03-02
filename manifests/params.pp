@@ -9,7 +9,7 @@ class gitlab_ci_multi_runner::params {
   $version = 'latest',
   $gitlab_ci_url = undef,
   $config_path = '/etc/gitlab-runner/config.toml',
-  $package_repo_gpgkey = https://packages.gitlab.com/gpg.key
+  $package_repo_gpgkey = 'https://packages.gitlab.com/gpg.key'
 
   case $::osfamily {
     'RedHat': {
@@ -26,13 +26,17 @@ class gitlab_ci_multi_runner::params {
     'Debian': {
 
       if $::operatingsystem == 'Debian' {
-        $package_repo_location = "https://packages.gitlab.com/runner/gitlab-ci-multi-runner/debian/"
+        $package_repo_location = 'https://packages.gitlab.com/runner/gitlab-ci-multi-runner/debian/'
         $package_srepo_location = undef
       }
       if $::operatingsystem == 'Ubuntu' {
-        $package_repo_location
+        $package_repo_location = undef
         $package_srepo_location = undef
       }
+    }
+    default: {
+      $package_repo_location = undef
+      $package_srepo_location = undef
     }
   }
 }

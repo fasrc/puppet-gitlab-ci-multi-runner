@@ -1,3 +1,5 @@
+# class Gitlab_ci_multi_runner
+#
 class gitlab_ci_multi_runner (
   $include_srepo          = true,
   $manage_repo            = true,

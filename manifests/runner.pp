@@ -144,5 +144,6 @@ define gitlab_ci_multi_runner::runner (
     target  => $gitlab_ci_multi_runner::config_path,
     order   => $order,
     content => template('gitlab_ci_multi_runner/runner.toml.erb'),
+    notify  => Service[$gitlab_ci_multi_runner::service_name],
   }
 }

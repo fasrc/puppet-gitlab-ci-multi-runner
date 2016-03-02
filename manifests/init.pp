@@ -12,7 +12,7 @@ class gitlab_ci_multi_runner (
   $service_name           = $gitlab_ci_multi_runner::params::service_name,
   $concurrent             = $gitlab_ci_multi_runner::params::concurrent,
   $gitlab_ci_url          = $gitlab_ci_multi_runner::params::gitlab_ci_url,
-){
+) inherits gitlab_ci_multi_runner::params {
 
   class { 'gitlab_ci_multi_runner::repo': } ->
   class { 'gitlab_ci_multi_runner::install': } ->

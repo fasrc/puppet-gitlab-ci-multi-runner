@@ -8,7 +8,7 @@ class gitlab_ci_multi_runner::config {
   }
 
   concat::fragment { 'gitlab_ci_multi_runner_globals':
-    target  => $gitlab_ci_multi_runner_globals::config_path,
+    target  => $gitlab_ci_multi_runner::config_path,
     content => template('gitlab_ci_multi_runner/globals.toml.erb'),
     order   => '0',
   }

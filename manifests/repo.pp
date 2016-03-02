@@ -10,7 +10,7 @@ class gitlab_ci_multi_runner::repo {
     'RedHat': {
       if $gitlab_ci_multi_runner::manage_repo {
         yumrepo { $repo_name:
-          desc          => $repo_name,
+          descr         => $repo_name,
           baseurl       => $gitlab_ci_multi_runner::package_repo_location,
           gpgkey        => $gitlab_ci_multi_runner::package_repo_gpgkey,
           gpgcheck      => 0,
@@ -19,7 +19,7 @@ class gitlab_ci_multi_runner::repo {
 
         if ($gitlab_ci_multi_runner::include_srepo) {
           yumrepo { $src_repo_name:
-            desc          => $src_repo_name,
+            descr         => $src_repo_name,
             baseurl       => $gitlab_ci_multi_runner::package_srepo_location,
             gpgkey        => $gitlab_ci_multi_runner::package_repo_gpgkey,
             gpgcheck      => 0,

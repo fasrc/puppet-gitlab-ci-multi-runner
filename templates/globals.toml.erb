@@ -1,1 +1,1 @@
-concurrent = <%= @concurrent ? 1 : 0 %>
+concurrent = <%= scope.lookupvar('gitlab_ci_multi_runner::concurrent') %>

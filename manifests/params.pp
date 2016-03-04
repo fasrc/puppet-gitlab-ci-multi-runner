@@ -10,6 +10,7 @@ class gitlab_ci_multi_runner::params {
   $gitlab_ci_url = undef
   $config_path = '/etc/gitlab-runner/config.toml'
   $package_repo_gpgkey = 'https://packages.gitlab.com/gpg.key'
+  $concurrent = 1
 
   case $::osfamily {
     'RedHat': {

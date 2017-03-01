@@ -1,15 +1,22 @@
-rvm: 1.8.7
+---
+language: ruby
+before_install: rm Gemfile.lock || true
+sudo: false
+rvm:
+  - 1.8.7
+  - 1.9.3
+  - 2.0.0
+  - 2.1.0
+  - 2.2
 notifications:
     email: false
+script: bundle exec rake test
 env:
-    - PUPPET_VERSION=3.8.2 PUPPETCOMMAND="parser validate"
-    - PUPPET_VERSION=2.6.18 PUPPETCOMMAND=" --parseonly --ignoreimport"
-    - PUPPET_VERSION=2.7.26 PUPPETCOMMAND="parser validate"
-script:
-    - puppet-lint --no-80chars-check --no-autoloader_layout-check .
-    - find . -name *.pp | xargs puppet $PUPPETCOMMAND
+  - PUPPET_GEM_VERSION="3.8.7"
+  - PUPPET_GEM_VERSION="4.0"
+  - PUPPET_GEM_VERSION="4.1"
 matrix:
-    include:
-        - rvm: 2.2.1
-          env: PUPPET_VERSION=4.2.1 PUPPETCOMMAND="parser validate"
+    exclude:
+        - rvm: 2.2
+          env: PUPPET_GEM_VERSION="3.8.7"
 

@@ -9,4 +9,11 @@ RSpec.configure do |c|
   c.manifest_dir    = File.join(base_dir, 'fixtures', 'manifests')
   c.manifest        = File.join(base_dir, 'fixtures', 'manifests', 'site.pp')
   c.environmentpath = File.join(Dir.pwd, 'spec')
+
+
+  if ENV['COVERAGE']
+    c.after(:suite) do
+      RSpec::Puppet::Coverage.report!(100.00)
+    end
+  end
 end

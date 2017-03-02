@@ -1,8 +1,5 @@
 require 'rubygems'
 require 'puppetlabs_spec_helper/module_spec_helper'
-if Gem.loaded_specs['rspec'].version < Gem::Version.create('3.2.0')
-  require 'coverage_patch'
-end
 
 base_dir = File.dirname(File.expand_path(__FILE__))
 

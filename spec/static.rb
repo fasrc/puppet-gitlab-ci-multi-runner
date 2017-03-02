@@ -10,13 +10,14 @@ module Static
       :kernelversion             => '2.6.32'
     },
     :Ubuntu => {
-      :osfamily               => 'Debian',
-      :operatingsystem        => 'Ubuntu',
-      :lsbdistid              => 'Ubuntu',
-      :lsbdistcodename        => 'maverick',
-      :kernelrelease          => '3.8.0-29-generic',
-      :operatingsystemrelease => '10.04',
+      :osfamily                  => 'Debian',
+      :operatingsystem           => 'Ubuntu',
+      :lsbdistid                 => 'Ubuntu',
+      :lsbdistcodename           => 'maverick',
+      :kernelrelease             => '3.8.0-29-generic',
+      :operatingsystemrelease    => '10.04',
       :operatingsystemmajrelease => '10',
+      :puppetversion             => "#{Gem.loaded_specs['puppet'].version.to_s}"
     }
   }
 end

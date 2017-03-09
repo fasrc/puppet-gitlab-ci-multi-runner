@@ -21,11 +21,10 @@ module Static
     }
   }
   RUNNER_CONFIGS = {
-    :shell_executor => {
-      :name          => 'shell_executor',
-      :gitlab_ci_url => 'gitlab_ci_url',
-      :token         => 'token',
-      :executor      => 'executor',
+    'shell_executor' => {
+      'gitlab_ci_url' => 'gitlab_ci_url',
+      'token'         => 'token',
+      'executor'      => 'executor',
     },
   }
 end

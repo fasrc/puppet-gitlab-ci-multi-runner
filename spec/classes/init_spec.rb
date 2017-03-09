@@ -36,6 +36,22 @@ describe 'gitlab_ci_multi_runner', :type => :class do
         let(:params) { { :concurrent => 5 } }
         it { should contain_concat__fragment('gitlab_ci_multi_runner_globals').with_content(/concurrent = #{concurrent}/) }
       end
+
+      Static::RUNNER_CONFIGS.each_key do |runner_cfg|
+        rcfg = Static::RUNNER_CONFIGS[runner_cfg]
+        url = rcfg['gitlab_ci_url']
+        token = rcfg['token']
+        executor = rcfg['executor']
+
+        context "with runner config: #{runner_cfg}" do
+          let(:params) { { :runners => { runner_cfg => rcfg } } }
+          it { should contain_gitlab_ci_multi_runner__runner(runner_cfg) }
+          it { should contain_concat__fragment("gitlab-runner-#{runner_cfg}").with_content(/name = "#{runner_cfg}"/) }
+          it { should contain_concat__fragment("gitlab-runner-#{runner_cfg}").with_content(/url = "#{url}"/) }
+          it { should contain_concat__fragment("gitlab-runner-#{runner_cfg}").with_content(/token = "#{token}"/) }
+          it { should contain_concat__fragment("gitlab-runner-#{runner_cfg}").with_content(/executor = "#{executor}"/) }
+        end
+      end
     end
   end
 end

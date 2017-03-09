@@ -20,4 +20,12 @@ module Static
       :puppetversion             => "#{Gem.loaded_specs['puppet'].version.to_s}"
     }
   }
+  RUNNER_CONFIGS = {
+    :shell_executor => {
+      :name          => 'shell_executor',
+      :gitlab_ci_url => 'gitlab_ci_url',
+      :token         => 'token',
+      :executor      => 'executor',
+    },
+  }
 end

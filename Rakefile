@@ -6,7 +6,7 @@ PuppetLint.configuration.send('disable_80chars')
 PuppetLint.configuration.send('disable_autoloader_layout')
 PuppetLint.configuration.ignore_paths = ["spec/**/*.pp", "pkg/**/*.pp"]
 
-PuppetSyntax.exclude_paths = ['tests', 'specs']
+PuppetSyntax.exclude_paths = ['tests', 'spec']
 
 namespace :syntax do
   desc "Syntax check Ruby files"

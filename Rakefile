@@ -6,7 +6,7 @@ PuppetLint.configuration.send('disable_80chars')
 PuppetLint.configuration.send('disable_autoloader_layout')
 PuppetLint.configuration.ignore_paths = ["spec/**/*.pp", "pkg/**/*.pp"]
 
-PuppetSyntax.exclude_paths = ['tests', 'specs']
+PuppetSyntax.exclude_paths = ['tests', 'spec']
 
 namespace :syntax do
   desc "Syntax check Ruby files"
@@ -22,8 +22,18 @@ Rake::Task['syntax'].enhance do
   Rake::Task['syntax:rubylibs'].invoke
 end
 
+# make spec_clean explicit via environment
+if not ENV['RSPEC_CLEAN_ON_SUCCESS']
+  Rake::Task[:spec].clear
+  task :spec do
+    Rake::Task[:spec_prep].invoke
+    Rake::Task[:spec_standalone].invoke
+  end
+end
+
 task :test => [
   :lint,
   :syntax,
   :spec
 ]
+

@@ -2,5 +2,6 @@ fixtures:
   forge_modules:
     stdlib: 'puppetlabs-stdlib'
     concat: 'puppetlabs-concat'
+    apt: 'puppetlabs-apt'
   symlinks:
     gitlab_ci_multi_runner: "#{source_dir}"

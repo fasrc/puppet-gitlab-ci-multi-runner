@@ -63,7 +63,6 @@ describe 'gitlab_ci_multi_runner', :type => :class do
           it { should_not contain_yumrepo('gitlab-ci-multi-runner') }
           it { should_not contain_yumrepo('gitlab-ci-multi-runner-source') }
         when :Ubuntu
-          it { should_not contain_class('apt') }
           it { should_not contain_package('apt-transport-https') }
         end
         it { should contain_docker__run('gitlab-runner-in-docker') }

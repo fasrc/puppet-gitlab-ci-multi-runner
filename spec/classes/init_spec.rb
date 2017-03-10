@@ -66,6 +66,17 @@ describe 'gitlab_ci_multi_runner', :type => :class do
           it { should_not contain_package('apt-transport-https') }
         end
         it { should contain_docker__run('gitlab-runner-in-docker') }
+        context "rspec-puppet should exclude this stuff: https://github.com/rodjek/rspec-puppet/issues/157" do
+          case osfamily
+          when :RedHat
+            it { should contain_package('device-mapper') }
+          when :Ubuntu
+            it { should contain_apt__pin('docker') }
+            it { should contain_package('apparmor') }
+            it { should contain_package('cgroup-lite') }
+          end
+          it { should contain_package('docker') }
+        end
       end
     end
   end

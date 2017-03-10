@@ -54,7 +54,15 @@ describe 'gitlab_ci_multi_runner', :type => :class do
       end
 
       context "with docker => true" do
-        let(:params) { { :docker => true } }
+        params = {
+          'docker' => true,
+          'docker_name' => 'gitlab-runner',
+          'docker_image' => 'gitlab/gitlab-runner:latest',
+          'docker_sock' => '/var/run/docker.sock',
+          'docker_restart' => true,
+          'config_path' => '/some/custom/path/config.toml',
+        }
+        let(:params) { params }
         it { should contain_class('docker') }
         it { should_not contain_package('gitlab-ci-multi-runner') }
         it { should_not contain_service('gitlab-runner') }
@@ -65,7 +73,16 @@ describe 'gitlab_ci_multi_runner', :type => :class do
         when :Ubuntu
           it { should_not contain_package('apt-transport-https') }
         end
-        it { should contain_docker__run('gitlab-runner-in-docker') }
+        it { should contain_concat(params['config_path']) }
+        it { should contain_docker__run('gitlab-runner-in-docker').with(
+          'name' => params['docker_name'],
+          'image' => params['docker_image'],
+          'restart_service' => params['docker_restart'],
+          'volumes' => [
+            "#{params['docker_sock']}:/var/run/docker.sock",
+            "#{params['config_path']}:/etc/gitlab-runner/config.toml",
+          ],
+        ) }
         context "rspec-puppet should exclude this stuff: https://github.com/rodjek/rspec-puppet/issues/157" do
           case osfamily
           when :RedHat

@@ -81,7 +81,7 @@ describe 'gitlab_ci_multi_runner', :type => :class do
           'volumes' => [
             "#{params['docker_sock']}:/var/run/docker.sock",
             "#{params['config_path']}:/etc/gitlab-runner/config.toml",
-          ],
+          ]
         ) }
         context "rspec-puppet should exclude this stuff: https://github.com/rodjek/rspec-puppet/issues/157" do
           case osfamily

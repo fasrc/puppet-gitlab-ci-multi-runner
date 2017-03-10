@@ -55,12 +55,17 @@ describe 'gitlab_ci_multi_runner', :type => :class do
 
       context "with docker => true" do
         params = {
+          'config_path' => '/some/custom/path/config.toml',
           'docker' => true,
           'docker_name' => 'gitlab-runner',
           'docker_image' => 'gitlab/gitlab-runner:latest',
           'docker_sock' => '/var/run/docker.sock',
           'docker_restart' => true,
-          'config_path' => '/some/custom/path/config.toml',
+          'docker_params' => {
+            'env' => [
+              'SECRET_TOKEN=secret',
+            ]
+          },
         }
         let(:params) { params }
         it { should contain_class('docker') }
@@ -81,7 +86,8 @@ describe 'gitlab_ci_multi_runner', :type => :class do
           'volumes' => [
             "#{params['docker_sock']}:/var/run/docker.sock",
             "#{params['config_path']}:/etc/gitlab-runner/config.toml",
-          ]
+          ],
+          'env' => params['docker_params']['env']
         ) }
         context "rspec-puppet should exclude this stuff: https://github.com/rodjek/rspec-puppet/issues/157" do
           case osfamily

@@ -12,8 +12,17 @@ class gitlab_ci_multi_runner (
   $service_name           = $gitlab_ci_multi_runner::params::service_name,
   $concurrent             = $gitlab_ci_multi_runner::params::concurrent,
   $gitlab_ci_url          = $gitlab_ci_multi_runner::params::gitlab_ci_url,
+  $docker                 = $gitlab_ci_multi_runner::params::docker,
+  $docker_image           = $gitlab_ci_multi_runner::params::docker_image,
+  $docker_sock            = $gitlab_ci_multi_runner::params::docker_sock,
+  $docker_restart         = $gitlab_ci_multi_runner::params::docker_restart,
+  $docker_params          = $gitlab_ci_multi_runner::params::docker_params,
   $runners                = {},
 ) inherits gitlab_ci_multi_runner::params {
+
+  if $docker {
+    include ::docker
+  }
 
   class { 'gitlab_ci_multi_runner::repo': } ->
   class { 'gitlab_ci_multi_runner::install': } ->

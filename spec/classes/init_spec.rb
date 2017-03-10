@@ -52,6 +52,22 @@ describe 'gitlab_ci_multi_runner', :type => :class do
           it { should contain_concat__fragment("gitlab-runner-#{runner_cfg}").with_content(/executor = "#{executor}"/) }
         end
       end
+
+      context "with docker => true" do
+        let(:params) { { :docker => true } }
+        it { should contain_class('docker') }
+        it { should_not contain_package('gitlab-ci-multi-runner') }
+        it { should_not contain_service('gitlab-runner') }
+        case osfamily
+        when :RedHat
+          it { should_not contain_yumrepo('gitlab-ci-multi-runner') }
+          it { should_not contain_yumrepo('gitlab-ci-multi-runner-source') }
+        when :Ubuntu
+          it { should_not contain_class('apt') }
+          it { should_not contain_package('apt-transport-https') }
+        end
+        it { should contain_docker__run('gitlab-runner-in-docker') }
+      end
     end
   end
 end

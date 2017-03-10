@@ -3,5 +3,6 @@ fixtures:
     stdlib: 'puppetlabs-stdlib'
     concat: 'puppetlabs-concat'
     apt: 'puppetlabs-apt'
+    docker: 'garethr/docker'
   symlinks:
     gitlab_ci_multi_runner: "#{source_dir}"

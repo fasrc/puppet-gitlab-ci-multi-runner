@@ -42,14 +42,30 @@ describe 'gitlab_ci_multi_runner', :type => :class do
         url = rcfg['gitlab_ci_url']
         token = rcfg['token']
         executor = rcfg['executor']
+        rtitle = "gitlab-runner-#{runner_cfg}"
 
         context "with runner config: #{runner_cfg}" do
           let(:params) { { :runners => { runner_cfg => rcfg } } }
           it { should contain_gitlab_ci_multi_runner__runner(runner_cfg) }
-          it { should contain_concat__fragment("gitlab-runner-#{runner_cfg}").with_content(/name = "#{runner_cfg}"/) }
-          it { should contain_concat__fragment("gitlab-runner-#{runner_cfg}").with_content(/url = "#{url}"/) }
-          it { should contain_concat__fragment("gitlab-runner-#{runner_cfg}").with_content(/token = "#{token}"/) }
-          it { should contain_concat__fragment("gitlab-runner-#{runner_cfg}").with_content(/executor = "#{executor}"/) }
+          it { should contain_concat__fragment(rtitle).with_content(/name = "#{runner_cfg}"/) }
+          it { should contain_concat__fragment(rtitle).with_content(/url = "#{url}"/) }
+          it { should contain_concat__fragment(rtitle).with_content(/token = "#{token}"/) }
+          it { should contain_concat__fragment(rtitle).with_content(/executor = "#{executor}"/) }
+          case executor
+          when 'docker'
+            image = rcfg['docker_image']
+            volumes = Regexp.escape(rcfg['docker_volumes'].to_s)
+            links = Regexp.escape(rcfg['docker_links'].to_s)
+            tls_verify = rcfg['docker_tls_verify']
+            privileged = rcfg['docker_privileged']
+            disable_cache = rcfg['docker_disable_cache']
+            it { should contain_concat__fragment(rtitle).with_content(/image = "#{image}"/) }
+            it { should contain_concat__fragment(rtitle).with_content(/volumes = #{volumes}/) }
+            it { should contain_concat__fragment(rtitle).with_content(/links = #{links}/) }
+            it { should contain_concat__fragment(rtitle).with_content(/tls_verify = #{tls_verify}/) }
+            it { should contain_concat__fragment(rtitle).with_content(/privileged = #{privileged}/) }
+            it { should contain_concat__fragment(rtitle).with_content(/disable_cache = #{disable_cache}/) }
+          end
         end
       end
 

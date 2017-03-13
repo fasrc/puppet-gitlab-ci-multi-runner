@@ -1,5 +1,3 @@
-
-
 module Static
   OSFACTS = {
     :RedHat => {
@@ -24,7 +22,18 @@ module Static
     'shell_executor' => {
       'gitlab_ci_url' => 'gitlab_ci_url',
       'token'         => 'token',
-      'executor'      => 'executor',
+      'executor'      => 'shell',
+    },
+    'docker_executor' => {
+      'gitlab_ci_url'        => 'gitlab_ci_url',
+      'token'                => 'token',
+      'executor'             => 'docker',
+      'docker_image'         => 'ruby:2.1',
+      'docker_volumes'       => ["/cache", "/etc/puppet/environments:/host/etc/puppet/environments", "/etc/passwd:/host/etc/passwd:ro"],
+      'docker_links'         => ["gitlab-dind:docker"],
+      'docker_tls_verify'    => true,
+      'docker_privileged'    => true,
+      'docker_disable_cache' => true,
     },
   }
 end

@@ -4,11 +4,19 @@
   token = "<%= @token %>"
   tls-ca-file = ""
   executor = "<%= @executor %>"
+<% if @executor == 'ssh' %>
   [runners.ssh]
+<% end %>
+<% if @executor == 'docker' %>
   [runners.docker]
-    image = ""
-    privileged = false
-  [runners.parallels]
-    base_name = ""
-  [runners.virtualbox]
-    base_name = ""
+    tls_verify = <%= @docker_tls_verify %>
+    image = "<%= @docker_image %>"
+    privileged = <%= @docker_privileged %>
+    disable_cache = <%= @docker_disable_cache %>
+<% if @docker_volumes -%>
+    volumes = <%= @docker_volumes %>
+<% end -%>
+<% if @docker_links -%>
+    links = <%= @docker_links %>
+<% end -%>
+<% end %>

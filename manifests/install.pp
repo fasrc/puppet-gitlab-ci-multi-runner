@@ -6,4 +6,8 @@ class gitlab_ci_multi_runner::install {
       ensure => $gitlab_ci_multi_runner::version,
     }
   }
+  file { 'gitlab-runner-default-config-dir':
+    ensure => directory,
+    path   => '/etc/gitlab-runner',
+  }
 }

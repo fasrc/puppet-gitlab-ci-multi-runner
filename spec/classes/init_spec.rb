@@ -28,6 +28,7 @@ describe 'gitlab_ci_multi_runner', :type => :class do
 
       it { should contain_package('gitlab-ci-multi-runner') }
       it { should contain_service('gitlab-runner') }
+      it { should contain_file('gitlab-runner-default-config-dir') }
       it { should contain_concat('/etc/gitlab-runner/config.toml') }
 
       concurrent = 5

@@ -11,6 +11,12 @@ class gitlab_ci_multi_runner::params {
   $config_path = '/etc/gitlab-runner/config.toml'
   $package_repo_gpgkey = 'https://packages.gitlab.com/gpg.key'
   $concurrent = 1
+  $docker = false
+  $docker_name = 'gitlab-runner'
+  $docker_image = 'gitlab/gitlab-runner:latest'
+  $docker_sock = '/var/run/docker.sock'
+  $docker_params = {}
+  $docker_restart = true
 
   case $::osfamily {
     'RedHat': {

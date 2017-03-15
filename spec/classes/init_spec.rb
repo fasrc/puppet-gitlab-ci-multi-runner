@@ -42,14 +42,79 @@ describe 'gitlab_ci_multi_runner', :type => :class do
         url = rcfg['gitlab_ci_url']
         token = rcfg['token']
         executor = rcfg['executor']
+        rtitle = "gitlab-runner-#{runner_cfg}"
 
         context "with runner config: #{runner_cfg}" do
           let(:params) { { :runners => { runner_cfg => rcfg } } }
           it { should contain_gitlab_ci_multi_runner__runner(runner_cfg) }
-          it { should contain_concat__fragment("gitlab-runner-#{runner_cfg}").with_content(/name = "#{runner_cfg}"/) }
-          it { should contain_concat__fragment("gitlab-runner-#{runner_cfg}").with_content(/url = "#{url}"/) }
-          it { should contain_concat__fragment("gitlab-runner-#{runner_cfg}").with_content(/token = "#{token}"/) }
-          it { should contain_concat__fragment("gitlab-runner-#{runner_cfg}").with_content(/executor = "#{executor}"/) }
+          it { should contain_concat__fragment(rtitle).with_content(/name = "#{runner_cfg}"/) }
+          it { should contain_concat__fragment(rtitle).with_content(/url = "#{url}"/) }
+          it { should contain_concat__fragment(rtitle).with_content(/token = "#{token}"/) }
+          it { should contain_concat__fragment(rtitle).with_content(/executor = "#{executor}"/) }
+          case executor
+          when 'docker'
+            image = rcfg['docker_image']
+            volumes = Regexp.escape(rcfg['docker_volumes'].to_s)
+            links = Regexp.escape(rcfg['docker_links'].to_s)
+            tls_verify = rcfg['docker_tls_verify']
+            privileged = rcfg['docker_privileged']
+            disable_cache = rcfg['docker_disable_cache']
+            it { should contain_concat__fragment(rtitle).with_content(/image = "#{image}"/) }
+            it { should contain_concat__fragment(rtitle).with_content(/volumes = #{volumes}/) }
+            it { should contain_concat__fragment(rtitle).with_content(/links = #{links}/) }
+            it { should contain_concat__fragment(rtitle).with_content(/tls_verify = #{tls_verify}/) }
+            it { should contain_concat__fragment(rtitle).with_content(/privileged = #{privileged}/) }
+            it { should contain_concat__fragment(rtitle).with_content(/disable_cache = #{disable_cache}/) }
+          end
+        end
+      end
+
+      context "with docker => true" do
+        params = {
+          'config_path' => '/some/custom/path/config.toml',
+          'docker' => true,
+          'docker_name' => 'gitlab-runner',
+          'docker_image' => 'gitlab/gitlab-runner:latest',
+          'docker_sock' => '/var/run/docker.sock',
+          'docker_restart' => true,
+          'docker_params' => {
+            'env' => [
+              'SECRET_TOKEN=secret',
+            ]
+          },
+        }
+        let(:params) { params }
+        it { should contain_class('docker') }
+        it { should_not contain_package('gitlab-ci-multi-runner') }
+        it { should_not contain_service('gitlab-runner') }
+        case osfamily
+        when :RedHat
+          it { should_not contain_yumrepo('gitlab-ci-multi-runner') }
+          it { should_not contain_yumrepo('gitlab-ci-multi-runner-source') }
+        when :Ubuntu
+          it { should_not contain_package('apt-transport-https') }
+        end
+        it { should contain_concat(params['config_path']) }
+        it { should contain_docker__run('gitlab-runner-in-docker').with(
+          'name' => params['docker_name'],
+          'image' => params['docker_image'],
+          'restart_service' => params['docker_restart'],
+          'volumes' => [
+            "#{params['docker_sock']}:/var/run/docker.sock",
+            "#{params['config_path']}:/etc/gitlab-runner/config.toml",
+          ],
+          'env' => params['docker_params']['env']
+        ) }
+        context "rspec-puppet should exclude this stuff: https://github.com/rodjek/rspec-puppet/issues/157" do
+          case osfamily
+          when :RedHat
+            it { should contain_package('device-mapper') }
+          when :Ubuntu
+            it { should contain_apt__pin('docker') }
+            it { should contain_package('apparmor') }
+            it { should contain_package('cgroup-lite') }
+          end
+          it { should contain_package('docker') }
         end
       end
     end

@@ -55,18 +55,28 @@ describe 'gitlab_ci_multi_runner', :type => :class do
           case executor
           when 'docker'
             image = rcfg['docker_image']
-            volumes = Regexp.escape(rcfg['docker_volumes'].to_s)
-            links = Regexp.escape(rcfg['docker_links'].to_s)
+            volumes = rcfg['docker_volumes']
+            links = rcfg['docker_links']
             tls_verify = rcfg['docker_tls_verify']
             privileged = rcfg['docker_privileged']
             disable_cache = rcfg['docker_disable_cache']
             it { should contain_concat__fragment(rtitle).with_content(/image = "#{image}"/) }
-            it { should contain_concat__fragment(rtitle).with_content(/volumes = #{volumes}/) }
-            it { should contain_concat__fragment(rtitle).with_content(/links = #{links}/) }
             it { should contain_concat__fragment(rtitle).with_content(/tls_verify = #{tls_verify}/) }
             it { should contain_concat__fragment(rtitle).with_content(/privileged = #{privileged}/) }
             it { should contain_concat__fragment(rtitle).with_content(/disable_cache = #{disable_cache}/) }
             it { should contain_concat__fragment(rtitle).that_notifies('Class[gitlab_ci_multi_runner::service]') }
+            if volumes
+              it { should contain_concat__fragment(rtitle).with_content(/volumes = \[/) }
+              volumes.each do |vol|
+                it { should contain_concat__fragment(rtitle).with_content(/      "#{vol}",/) }
+              end
+            end
+            if links
+              it { should contain_concat__fragment(rtitle).with_content(/links = \[/) }
+              links.each do |link|
+                it { should contain_concat__fragment(rtitle).with_content(/      "#{link}",/) }
+              end
+            end
           end
         end
       end

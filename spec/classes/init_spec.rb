@@ -66,6 +66,7 @@ describe 'gitlab_ci_multi_runner', :type => :class do
             it { should contain_concat__fragment(rtitle).with_content(/tls_verify = #{tls_verify}/) }
             it { should contain_concat__fragment(rtitle).with_content(/privileged = #{privileged}/) }
             it { should contain_concat__fragment(rtitle).with_content(/disable_cache = #{disable_cache}/) }
+            it { should contain_concat__fragment(rtitle).that_notifies('Class[gitlab_ci_multi_runner::service]') }
           end
         end
       end
